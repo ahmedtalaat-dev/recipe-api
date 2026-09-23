@@ -31,9 +31,9 @@ const createRecipe = async (req, res) => {
   try {
     const recipe = await Recipe.create({
       ...req.body,
+      createdBy: req.user._id,
       image: req.file ? `/uploads/${req.file.filename}` : undefined,
     });
-
     res.status(201).json(recipe);
   } catch (error) {
     res.status(400).json({ message: "Failed to create recipe" });
@@ -51,14 +51,10 @@ const updateRecipe = async (req, res) => {
       updateData.image = `/uploads/${req.file.filename}`;
     }
 
-    const recipe = await Recipe.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    const recipe = await Recipe.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!recipe) {
       return res.status(404).json({ message: "Recipe not found" });
@@ -86,9 +82,9 @@ const deleteRecipe = async (req, res) => {
 };
 
 module.exports = {
-    getRecipes,
-    getRecipe,
-    createRecipe,
-    updateRecipe,
-    deleteRecipe,
-}
+  getRecipes,
+  getRecipe,
+  createRecipe,
+  updateRecipe,
+  deleteRecipe,
+};
